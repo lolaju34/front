@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Création de profil utilisateur</title>
+</head>
+<body>
+  <div id="app"></div>
+  <button id="generate-films-button" style="display: none;" onclick="fetchRandomFilms()">Générer des films aléatoires</button>
+  <script type="module">
+    import CreateUserProfile from '/src/lib/CreateProfil.svelte';
+
+    const app = new CreateUserProfile({
+      target: document.getElementById('app'),
+      props: {
+        onProfileCreatedSuccess: handleProfileCreationSuccess
+      }
+    });
+
+    async function fetchRandomFilms() {
+  try {
+    const response = await fetch('http://localhost:3000/api/films/generate');
+    if (response.ok) {
+      const films = await response.json();
+      app.update({ films });
+    } else {
+      console.error('Erreur lors de la récupération des films aléatoires:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération des films aléatoires:', error);
+  }
+}
+
+    function handleProfileCreationSuccess() {
+      const button = document.getElementById('generate-films-button');
+      if (button) {
+        button.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
+
